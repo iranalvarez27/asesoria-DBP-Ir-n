@@ -105,13 +105,13 @@ def inicio():
         db.session.add(alumno)  
         db.session.commit()
         subquery = db.session.query(Persona.id).filter(Persona.id_usuario == current_user.email).subquery()
-        p = Persona.query.filter(Persona.id.in_(subquery)).all()
+        p = Persona.query.filter(Persona.id.in_(subquery)).order_by('id').all()
     
         if p is not None:
             return redirect('inicio')
         
     subquery = db.session.query(Persona.id).filter(Persona.id_usuario == current_user.email).subquery()
-    p = Persona.query.filter(Persona.id.in_(subquery)).all()        
+    p = Persona.query.filter(Persona.id.in_(subquery)).order_by('id').all()   
     return render_template('index.html', form = form, cursos = p)
 
 @app.route('/show-data/<user>', methods=['GET'])
