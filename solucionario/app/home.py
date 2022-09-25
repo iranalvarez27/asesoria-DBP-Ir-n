@@ -112,14 +112,14 @@ def inicio():
 def agregar(user):
     response = {}
     id = int(user)
-    print(id)
-    print(type(id))
-    print(type(int(id)))
+    #print(id)
+    #print(type(id))
+    #print(type(int(id)))
     todo = Persona(id=id)
     persona = Persona.query.get(user)
     #print(persona['Nombre'])
-    print(todo.nombre)
-    print(persona.nombre)
+    #print(todo.nombre)
+    #print(persona.nombre)
     '''print("llega")
     print(type(id))
     db.session.add(todo)
@@ -135,12 +135,18 @@ def agregar(user):
     #response['user'] = persona
     return jsonify(response)
 
-@app.route('/actualizar/<int:id>', methods=['PATCH'])
+@app.route('/actualizar/<id>', methods=['GET'])
 @login_required
 def actualizar(id):
     return 0
 
-@app.route('/delete/<int:id>', methods=['DELETE'])
+@app.route('/delete/<id>', methods=['GET'])
 @login_required
 def eliminar(id):
-    return 0
+    response = {}
+    print("Su ID ES: ",id)
+    persona = Persona.query.get(id)
+    db.session.delete(persona)
+    db.session.commit()
+    response['id'] = persona.id
+    return jsonify(response)

@@ -131,6 +131,12 @@
                 <td>
                     <p>{{curso.carrera}}</p>
                 </td>
+                <td>
+                    <p>Actualizar</p>
+                </td>
+                <td>
+                    <button id = {{curso.id}} onclick="delete_data({{curso.id}})">Borrar</button>
+                </td>
             </tr>
             {% endfor %}
         </thead>
@@ -159,14 +165,13 @@
         fetch('/show-data/'+user, {
             method: 'GET',
             headers: {
-                'Contetn-Type': 'application/json'
+                'Content-Type': 'application/json'
             }
         }).then(function(response) {
             console.log('response: ', response);
             return response.json();
         }).then(function(responseJson) {
             console.log('responseJson = ', responseJson);
-            
             const li1 = document.createElement('li');
             const li2 = document.createElement('li');
             const li3 = document.createElement('li');
@@ -179,17 +184,32 @@
             li4.innerHTML = responseJson['edad'];
             li5.innerHTML = responseJson['ciclo'];
             li6.innerHTML = responseJson['carrera'];
-            document.getElementById('todos').appendChild(li1);  
-            document.getElementById('todos').appendChild(li2);  
-            document.getElementById('todos').appendChild(li3);  
-            document.getElementById('todos').appendChild(li4);  
-            document.getElementById('todos').appendChild(li5);  
-            document.getElementById('todos').appendChild(li6);  
+            document.getElementById('todos').appendChild(li1);
+            document.getElementById('todos').appendChild(li2);
+            document.getElementById('todos').appendChild(li3);
+            document.getElementById('todos').appendChild(li4);
+            document.getElementById('todos').appendChild(li5);
+            document.getElementById('todos').appendChild(li6);
 
-            document.getElementById('show-info').className = '';   
+            document.getElementById('show-info').className = '';
         })
     }
     function ocultar(){
         document.getElementById('show-info').className = 'hidden'; 
     }
+
+    function delete_data(id){
+        fetch('/delete/'+id,{
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function(response){
+            console.log('response: ', response);
+            return response.json();
+        }).then(function(responseJson){
+            location.reload();
+        })
+    }
+
 </script>

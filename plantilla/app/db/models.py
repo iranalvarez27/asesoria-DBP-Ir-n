@@ -53,20 +53,3 @@ class Persona(db.Model):
 
 #db.create_all() #Crea las tablas 
 #Rutas de la pagina
-
-
-'''
-<tbody>
-            {% for persona in personas %}
-            <tr>
-                <td>{{persona.id}}</td>
-                <td>{{persona.nombre}}</td>
-                <td>{{persona.apellido}}</td>
-                <td>{{persona.edad}}</td>
-                <td>{{persona.ciclo}}</td>
-                <td>{{persona.carrera}}</td>
-                <td><a href="editar/{{persona.id}}">Editar</a></td>
-                <td><a href="eliminar/{{persona.id}}">Eliminar</a></td>
-            </tr>
-        </tbody>
-'''

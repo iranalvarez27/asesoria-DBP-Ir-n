@@ -64,7 +64,6 @@ def login():
 @login_required
 def inicio():
     form = forms.Alumno(request.form)
-    
     return render_template('index.html', form = form)
 
 @app.route('/show-data/<user>', methods=['GET'])
