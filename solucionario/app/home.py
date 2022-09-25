@@ -1,7 +1,9 @@
 from http import client
+import json
 import os
 from os import access, getenv
 from unicodedata import name
+from urllib import response
 from flask import (
     Blueprint,
     Flask,
@@ -104,8 +106,13 @@ def inicio():
         db.session.commit()
         subquery = db.session.query(Persona.id).filter(Persona.id_usuario == current_user.email).subquery()
         p = Persona.query.filter(Persona.id.in_(subquery)).all()
-        return render_template('index.html', form = form, cursos=p)
-    return render_template('index.html', form = form)
+    
+        if p is not None:
+            return redirect('inicio')
+        
+    subquery = db.session.query(Persona.id).filter(Persona.id_usuario == current_user.email).subquery()
+    p = Persona.query.filter(Persona.id.in_(subquery)).all()        
+    return render_template('index.html', form = form, cursos = p)
 
 @app.route('/show-data/<user>', methods=['GET'])
 @login_required
@@ -135,16 +142,28 @@ def agregar(user):
     #response['user'] = persona
     return jsonify(response)
 
-@app.route('/actualizar/<id>', methods=['GET'])
+@app.route('/actualizar/<id>', methods=['GET','POST'])
 @login_required
 def actualizar(id):
-    return 0
+    form = forms.Alumno(request.form)
+    if request.method == 'POST':
+        persona = Persona.query.filter(Persona.id == id).one_or_none()
+        
+        persona.nombre = form.nombre.data
+        persona.apellido = form.apellido.data
+        persona.edad = int(form.edad.data)
+        persona.ciclo = int(form.ciclo.data)
+        persona.carrera = form.carrera.data
+        
+        db.session.commit()
+        return redirect(url_for('login.inicio'))
+    return render_template('actualizar.html', id=id, form = form)
 
-@app.route('/delete/<id>', methods=['GET'])
+@app.route('/delete/<id>', methods=['DELETE'])
 @login_required
 def eliminar(id):
     response = {}
-    print("Su ID ES: ",id)
+    #print("Su ID ES: ",id)
     persona = Persona.query.get(id)
     db.session.delete(persona)
     db.session.commit()

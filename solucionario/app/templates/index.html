@@ -132,10 +132,12 @@
                     <p>{{curso.carrera}}</p>
                 </td>
                 <td>
-                    <p>Actualizar</p>
+                    <a href="actualizar/{{curso.id}}">
+                        <button id = {{curso.id}} class="btn btn-primary" >Actualizar</button>
+                    </a>
                 </td>
                 <td>
-                    <button id = {{curso.id}} onclick="delete_data({{curso.id}})">Borrar</button>
+                    <button id = {{curso.id}} class="btn btn-primary" onclick="delete_data({{curso.id}})">Borrar</button>
                 </td>
             </tr>
             {% endfor %}
@@ -200,7 +202,7 @@
 
     function delete_data(id){
         fetch('/delete/'+id,{
-            method: 'GET',
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             }
