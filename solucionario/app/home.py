@@ -1,3 +1,4 @@
+from distutils.errors import PreprocessError
 from http import client
 import json
 import os
@@ -80,7 +81,6 @@ def login():
             usuario.check_password(password)) : #Entra si el usuario existe, tiene correcta la contraseña y está confirmado
             
             login_user(usuario, remember=True)
-            # print(f'{request.url_rule.rule}\n\t{usuario}')
             return redirect(url_for('login.inicio'))
         else: 
             print("No entraste :(")
@@ -119,27 +119,14 @@ def inicio():
 def agregar(user):
     response = {}
     id = int(user)
-    #print(id)
-    #print(type(id))
-    #print(type(int(id)))
     todo = Persona(id=id)
     persona = Persona.query.get(user)
-    #print(persona['Nombre'])
-    #print(todo.nombre)
-    #print(persona.nombre)
-    '''print("llega")
-    print(type(id))
-    db.session.add(todo)
-    db.session.commit()
-    '''
     response['nombre'] = persona.nombre
     response['apellido'] = persona.apellido
     response['edad'] = persona.edad
     response['ciclo'] = persona.ciclo
     response['carrera'] = persona.carrera
     response['user'] = persona.id_usuario
-    
-    #response['user'] = persona
     return jsonify(response)
 
 @app.route('/actualizar/<id>', methods=['GET','POST'])
@@ -148,24 +135,28 @@ def actualizar(id):
     form = forms.Alumno(request.form)
     if request.method == 'POST':
         persona = Persona.query.filter(Persona.id == id).one_or_none()
-        
         persona.nombre = form.nombre.data
         persona.apellido = form.apellido.data
         persona.edad = int(form.edad.data)
         persona.ciclo = int(form.ciclo.data)
         persona.carrera = form.carrera.data
-        
         db.session.commit()
         return redirect(url_for('login.inicio'))
-    return render_template('actualizar.html', id=id, form = form)
+    return render_template('actualizar.html', form = form, id=id)
 
 @app.route('/delete/<id>', methods=['DELETE'])
 @login_required
 def eliminar(id):
     response = {}
-    #print("Su ID ES: ",id)
-    persona = Persona.query.get(id)
-    db.session.delete(persona)
-    db.session.commit()
-    response['id'] = persona.id
-    return jsonify(response)
+    try:
+        persona = Persona.query.get(id) # 1 registro
+        db.session.delete(persona)
+        response['id'] = persona.id
+        db.session.commit()
+        return jsonify(response)
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+        return jsonify(response)
