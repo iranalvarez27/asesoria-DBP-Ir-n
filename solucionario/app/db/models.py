@@ -51,5 +51,5 @@ class Persona(db.Model):
         response['carrera'] = self.carrera 
         return response
 
-#db.create_all() #Crea las tablas 
+db.create_all() #Crea las tablas 
 #Rutas de la pagina
